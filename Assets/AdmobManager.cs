@@ -26,7 +26,10 @@ public class AdmobManager : MonoBehaviour
     void Update()
     {
         //FrontAdsBtn.interactable = frontAd.IsLoaded();
+        if(Application.isMobilePlatform)
         RewardAdsBtn.interactable = rewardAd.IsLoaded();
+        else
+            RewardAdsBtn.interactable = false;
     }
 
     AdRequest GetAdRequest()

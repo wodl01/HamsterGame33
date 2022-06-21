@@ -234,6 +234,13 @@ public class ShopManager : MonoBehaviour
         questManager.QuestPanelUpdate();
         AudioManager.Play("Cancel1");
     }
+    public void ClosePanelNotTouchPanelOn(GameObject target)
+    {
+        target.SetActive(false);
+
+        questManager.QuestPanelUpdate();
+        AudioManager.Play("Cancel1");
+    }
 
     void ItemInfosAllUpdate()
     {

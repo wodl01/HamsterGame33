@@ -525,13 +525,13 @@ public class SaveManager : MonoBehaviour
             PlayerPrefs.SetInt("time", passedTimeInGame);
     }
 
-    private void Update()
+
+    public void AllDatasReset()
     {
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            PlayerPrefs.DeleteAll();
-            resetActive = true;
-        }
+        PlayerPrefs.DeleteAll();
+        resetActive = true;
+
+        Application.Quit();
     }
     private void FixedUpdate()
     {

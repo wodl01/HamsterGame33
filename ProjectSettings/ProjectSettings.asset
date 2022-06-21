@@ -154,7 +154,7 @@ PlayerSettings:
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
     Android: com.sleeepyhamster.hamsterbutler
-    Standalone: com.sleeepyhamster.hamsterbulter
+    Standalone: com.sleeepyhamster.hamsterbutler
     iPhone: com.sleeepyhamster.hamsterbulter
   buildNumber:
     Standalone: 0

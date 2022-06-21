@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - Balloon
+  - DD
+  - Door
+  - HamSter
+  - Manager
+  - Rollor
+  - Dish
+  - WallDeco
+  - CatchCol
+  - RollorPos
+  - BathPos
+  - Bath
+  - DrinkingPos
+  - WaterBowl
+  - EatingPos
+  - Petting
+  - Window
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - CloudMask
+  - Water
+  - UI
+  - Wall
+  - Window
+  - Balloon
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0

@@ -281,7 +281,7 @@ public class dongScript : MonoBehaviour
 
         questManager.CheckQuestComplete(true);
 
-        if (!episodeManager.episodeInfos[3].isWatch) episodeManager.EpisodeStart(false, 3, false);
+        episodeManager.AddEpisodeList(false, 3);
     }
 
     public void CageUpdate()
@@ -401,7 +401,33 @@ public class dongScript : MonoBehaviour
         }
         return value;
     }
-
+    public void SetScoreValue(int value ,priceType type)
+    {
+        switch (type)
+        {
+            case priceType.coin:
+                coin = value;
+                break;
+            case priceType.hamTicket:
+                hamTicket = value;
+                break;
+            case priceType.feverTicket:
+                feverTicket = value;
+                break;
+            case priceType.nameTicket:
+                nameChangeTicket = value;
+                break;
+            case priceType.normalDirTicket:
+                normalColorTicket = value;
+                break;
+            case priceType.specialDirTicket:
+                specialColorTicket = value;
+                break;
+            case priceType.customDirTicket:
+                customColorTicket = value;
+                break;
+        }
+    }
 
     void TouchDish(int num)
     {

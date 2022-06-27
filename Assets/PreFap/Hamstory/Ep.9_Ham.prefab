@@ -558,7 +558,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   uiChangeManager: {fileID: 0}
   episodeManager: {fileID: 0}
-  storyIndex: 0
+  storyIndex: 8
   isHamPisode: 1
   rewardItem:
     itemPanelOb: {fileID: 0}

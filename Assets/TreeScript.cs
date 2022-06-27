@@ -37,6 +37,7 @@ public class TreeScript : MonoBehaviour
     public void GetLogined(int passedTime_A)
     {
         fruitAmount = PlayerPrefs.GetInt("fruitAmount");
+
         passedTime = passedTime_A;
         while (passedTime > fruitPerMinite * 60 && fruitAmount != maxFruitAmount)
         {
@@ -54,7 +55,11 @@ public class TreeScript : MonoBehaviour
         fruitAmountText.text = fruitAmount.ToString() + "/" + maxFruitAmount.ToString();
         TreeShapeUpdate();
     }
-
+    public int GetFruitCoolTimeDatas()
+    {
+        
+        return curTime_m * 60 + (int)curTime_s;
+    }
     private void FixedUpdate()
     {
         if(timerActive)

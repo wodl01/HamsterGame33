@@ -114,10 +114,13 @@ public class QuestManager : MonoBehaviour
         isOpenQuest[index] = !isOpenQuest[index];
         ani[index].SetBool("Open", isOpenQuest[index]);
 
+        if(index != 2)
         informationText.text = questInfos[questIndex].questInfos[index].information;
 
         if (!isOpenQuest[0] && !isOpenQuest[1]) questInfoPanel.SetActive(false);
         else questInfoPanel.SetActive(true);
+
+        Debug.Log("AFWDW");
     }
 
 

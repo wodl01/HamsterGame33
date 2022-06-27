@@ -1,11 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.Networking;
-using System.Net;
-using System.Net.NetworkInformation;
-using System.Net.Sockets;
 using System;
 
 public class SaveManager : MonoBehaviour
@@ -13,7 +8,6 @@ public class SaveManager : MonoBehaviour
     public static SaveManager instance;
 
     [SerializeField] private string url;
-    private float passingTimeInGame;
     [SerializeField] int passedTime;
     [SerializeField] int loginedTime;
 
@@ -40,38 +34,22 @@ public class SaveManager : MonoBehaviour
     {
         instance = this;
         GetAllPlayerPrefs();
-        StartCoroutine(GetLogined(0));
+        SetPassedTime();
     }
-    public IEnumerator GetLogined(int eventNum)
+
+    public void SetPassedTime()
     {
-        UnityWebRequest request = new UnityWebRequest();
-        using (request = UnityWebRequest.Get(url))
-        {
-            yield return request.SendWebRequest();
+        string timeStr = PlayerPrefs.GetString("LogoutTime");
+        int fluitCool = PlayerPrefs.GetInt("FluitCoolTime");
+        DateTime startTime = Convert.ToDateTime(timeStr);
 
-            if (request.isNetworkError)
-            {
-                Debug.Log(request.error);
-            }
-            else
-            {
-                string date = request.GetResponseHeader("date");
+        DateTime currentTime = DateTime.Now;
+        TimeSpan timeDif = currentTime - startTime;
 
-                DateTime dateTime = DateTime.Parse(date);
-                timeStamp = dateTime - new DateTime(2022, 1, 1, 0, 0, 0);
-                switch (eventNum)
-                {
-                    case 0:
-                        loginedTime = (int)timeStamp.TotalSeconds;
-                        passedTime = (int)timeStamp.TotalSeconds - PlayerPrefs.GetInt("time");
-                        treeManager.GetLogined(passedTime);
-
-                        break;
-                }
-
-            }
-        }
+        Debug.Log(timeDif.TotalSeconds);
+        treeManager.GetLogined((int)timeDif.TotalSeconds + fluitCool);
     }
+
 
 
 
@@ -102,12 +80,15 @@ public class SaveManager : MonoBehaviour
         PlayerPrefs.SetInt("QuestIndex", questManager.GetQuestIndex());
 
         #region Goods
-        PlayerPrefs.SetInt("GoldAmount", gameManager.GetScoreValue(priceType.coin));
-        PlayerPrefs.SetInt("HamTicketAmount", gameManager.GetScoreValue(priceType.hamTicket));
-        PlayerPrefs.SetInt("NormalDirTicketAmount", gameManager.GetScoreValue(priceType.normalDirTicket));
-        PlayerPrefs.SetInt("SpecialDirTicketAmount", gameManager.GetScoreValue(priceType.specialDirTicket));
-        PlayerPrefs.SetInt("CustomDirTicketAmount", gameManager.GetScoreValue(priceType.customDirTicket));
-        PlayerPrefs.SetInt("FeverTicketAmount", gameManager.GetScoreValue(priceType.feverTicket));
+
+
+        PlayerPrefs.SetString("Goods", (gameManager.GetScoreValue(priceType.coin)
+            + "," + gameManager.GetScoreValue(priceType.hamTicket)
+            + "," + gameManager.GetScoreValue(priceType.normalDirTicket)
+            + "," + gameManager.GetScoreValue(priceType.specialDirTicket)
+            + "," + gameManager.GetScoreValue(priceType.customDirTicket)
+            + "," + gameManager.GetScoreValue(priceType.feverTicket)).ToString());
+
         #endregion
 
         #region ShopItem
@@ -273,6 +254,7 @@ public class SaveManager : MonoBehaviour
         if (PlayerPrefs.HasKey("cageAmount"))
             gameManager.cageAmount = PlayerPrefs.GetInt("cageAmount");
         gameManager.CageUpdate();
+
         #region Story
         for (int i = 0; i < episodeManager.episodeInfos.Count; i++)
         {
@@ -299,22 +281,19 @@ public class SaveManager : MonoBehaviour
 
         #endregion
 
-
-
         #region Goods
 
-        if (PlayerPrefs.HasKey("GoldAmount"))
-            gameManager.AddScoreValue(PlayerPrefs.GetInt("GoldAmount"), priceType.coin);
-        if (PlayerPrefs.HasKey("HamTicketAmount"))
-            gameManager.AddScoreValue(PlayerPrefs.GetInt("HamTicketAmount"), priceType.hamTicket);
-        if (PlayerPrefs.HasKey("NormalDirTicketAmount"))
-            gameManager.AddScoreValue(PlayerPrefs.GetInt("NormalDirTicketAmount"), priceType.normalDirTicket);
-        if (PlayerPrefs.HasKey("SpecialDirTicketAmount"))
-            gameManager.AddScoreValue(PlayerPrefs.GetInt("SpecialDirTicketAmount"), priceType.specialDirTicket);
-        if (PlayerPrefs.HasKey("CustomDirTicketAmount"))
-            gameManager.AddScoreValue(PlayerPrefs.GetInt("CustomDirTicketAmount"), priceType.customDirTicket);
-        if (PlayerPrefs.HasKey("FeverTicketAmount"))
-            gameManager.AddScoreValue(PlayerPrefs.GetInt("FeverTicketAmount"), priceType.feverTicket);
+        if (PlayerPrefs.HasKey("Goods"))
+        {
+            string[] goods = PlayerPrefs.GetString("Goods").Split(',');
+            gameManager.SetScoreValue(int.Parse(goods[0]), priceType.coin);
+            gameManager.SetScoreValue(int.Parse(goods[1]), priceType.hamTicket);
+            gameManager.SetScoreValue(int.Parse(goods[2]), priceType.normalDirTicket);
+            gameManager.SetScoreValue(int.Parse(goods[3]), priceType.specialDirTicket);
+            gameManager.SetScoreValue(int.Parse(goods[4]), priceType.customDirTicket);
+            gameManager.SetScoreValue(int.Parse(goods[5]), priceType.feverTicket);
+        }
+            
         #endregion
 
         #region ShopItem
@@ -502,39 +481,57 @@ public class SaveManager : MonoBehaviour
         LogOut();
     }
 
-    private void OnApplicationPause(bool pause)
+    bool isPaused = false;
+
+    void OnApplicationPause(bool pause)
     {
         if (pause)
         {
+            isPaused = true;
+            /* 앱이 비활성화 되었을 때 처리 */
             SetAllPlayerPrefs();
 
 
             LogOut();
         }
+
         else
         {
-
+            if (isPaused)
+            {
+                isPaused = false;
+                /* 앱이 활성화 되었을 때 처리 */
+                instance = this;
+                GetAllPlayerPrefs();
+                SetPassedTime();
+            }
         }
     }
 
+
+
     public void LogOut()
     {
-        int passedTimeInGame = loginedTime + Mathf.RoundToInt(passingTimeInGame) - treeManager.GetTimeValue(0) - (treeManager.GetTimeValue(1) * 60);
-
-        if (!resetActive)
-            PlayerPrefs.SetInt("time", passedTimeInGame);
+        DateTime startTime = DateTime.Now;
+        
+        PlayerPrefs.SetString("LogoutTime", startTime.ToString());
+        PlayerPrefs.SetInt("FluitCoolTime", treeManager.GetFruitCoolTimeDatas());
     }
 
 
     public void AllDatasReset()
     {
-        PlayerPrefs.DeleteAll();
-        resetActive = true;
+
 
         Application.Quit();
     }
-    private void FixedUpdate()
+
+    public void Update()
     {
-        passingTimeInGame += Time.deltaTime;
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            PlayerPrefs.DeleteAll();
+            resetActive = true;
+        }
     }
 }

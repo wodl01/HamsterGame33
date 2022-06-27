@@ -111,6 +111,7 @@ public class HousingManager : MonoBehaviour
         curPage = -1;
         mainUi.SetActive(false);
         moneyUi.SetActive(false);
+        gameManager.cageNum = 0;
 
         wareTypeCode = 0;
 
